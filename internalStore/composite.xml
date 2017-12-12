@@ -49,7 +49,7 @@
     <target.uri>manageInventory/manageinventory_client</target.uri>
   </wire>
   <wire>
-    <source.uri>manageInventory/Service1</source.uri>
+    <source.uri>manageInventory/InternalStoreSDO</source.uri>
     <target.uri>IntertnalStoreSDOService</target.uri>
   </wire>
 </composite>
