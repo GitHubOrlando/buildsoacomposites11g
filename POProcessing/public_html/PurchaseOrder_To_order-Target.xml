@@ -1,0 +1,20 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<imp1:order xmlns:imp1="http://www.example.org/ns/intorder">
+   <imp1:customerId>custID1</imp1:customerId>
+   <imp1:orderId>ID2</imp1:orderId>
+   <imp1:payMethod>credit</imp1:payMethod>
+   <imp1:shipMethod>two_day</imp1:shipMethod>
+   <imp1:status>status5</imp1:status>
+   <imp1:creditCard>
+      <imp1:cardType>ccType6</imp1:cardType>
+      <imp1:cardNumber>ccNumber7</imp1:cardNumber>
+   </imp1:creditCard>
+   <imp1:items>
+      <imp1:item>
+         <imp1:prodId>productId8</imp1:prodId>
+         <imp1:prodName>productName9</imp1:prodName>
+         <imp1:price>10</imp1:price>
+         <imp1:qty>-0</imp1:qty>
+      </imp1:item>
+   </imp1:items>
+</imp1:order>

@@ -1,0 +1,121 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<schema elementFormDefault="qualified" targetNamespace="/internalstoresdo/common/types/" xmlns:ns0="http://xmlns.oracle.com/adf/svc/types/"
+     xmlns:ns1="/internalstoresdo/common/" xmlns:tns="/internalstoresdo/common/types/" xmlns="http://www.w3.org/2001/XMLSchema">
+    <import namespace="http://xmlns.oracle.com/adf/svc/types/" schemaLocation="BC4JService.xsd"/>
+    <import namespace="/internalstoresdo/common/" schemaLocation="InternalStoreViewSDO.xsd"/>
+    <import namespace="http://xmlns.oracle.com/adf/svc/types/" schemaLocation="BC4JServiceCS.xsd"/>
+    <element name="getInternalStoreView1">
+        <complexType>
+            <sequence>
+                <element name="prodId" type="string"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="getInternalStoreView1Response">
+        <complexType>
+            <sequence>
+                <element name="result" type="ns1:InternalStoreViewSDO"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="createInternalStoreView1">
+        <complexType>
+            <sequence>
+                <element name="internalStoreView1" type="ns1:InternalStoreViewSDO"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="createInternalStoreView1Response">
+        <complexType>
+            <sequence>
+                <element name="result" type="ns1:InternalStoreViewSDO"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="updateInternalStoreView1">
+        <complexType>
+            <sequence>
+                <element name="internalStoreView1" type="ns1:InternalStoreViewSDO"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="updateInternalStoreView1Response">
+        <complexType>
+            <sequence>
+                <element name="result" type="ns1:InternalStoreViewSDO"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="deleteInternalStoreView1">
+        <complexType>
+            <sequence>
+                <element name="internalStoreView1" type="ns1:InternalStoreViewSDO"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="deleteInternalStoreView1Response">
+        <complexType>
+            <sequence/>
+        </complexType>
+    </element>
+    <element name="mergeInternalStoreView1">
+        <complexType>
+            <sequence>
+                <element name="internalStoreView1" type="ns1:InternalStoreViewSDO"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="mergeInternalStoreView1Response">
+        <complexType>
+            <sequence>
+                <element name="result" type="ns1:InternalStoreViewSDO"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="findInternalStoreView1">
+        <complexType>
+            <sequence>
+                <element name="findCriteria" type="ns0:FindCriteria"/>
+                <element name="findControl" type="ns0:FindControl"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="findInternalStoreView1Response">
+        <complexType>
+            <sequence>
+                <element maxOccurs="unbounded" minOccurs="0" name="result" type="ns1:InternalStoreViewSDO"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="processInternalStoreView1">
+        <complexType>
+            <sequence>
+                <element name="changeOperation" type="string"/>
+                <element maxOccurs="unbounded" minOccurs="0" name="internalStoreView1" type="ns1:InternalStoreViewSDO"/>
+                <element name="processControl" type="ns0:ProcessControl"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="processInternalStoreView1Response">
+        <complexType>
+            <sequence>
+                <element maxOccurs="unbounded" minOccurs="0" name="result" type="ns1:InternalStoreViewSDO"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="processCSInternalStoreView1">
+        <complexType>
+            <sequence>
+                <element name="processData" type="ns0:ProcessData"/>
+                <element name="processControl" type="ns0:ProcessControl"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="processCSInternalStoreView1Response">
+        <complexType>
+            <sequence>
+                <element name="result" type="ns0:ProcessData"/>
+            </sequence>
+        </complexType>
+    </element>
+</schema>

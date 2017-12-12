@@ -1,0 +1,25 @@
+<?binding.jca creditCardDBService_db.jca?>
+<wsdl:definitions name="creditCardDBService" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/POApp/creditCardValidation/creditCardDBService" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/POApp/creditCardValidation/creditCardDBService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/creditCardDBService">
+    <plt:partnerLinkType name="creditCardDBService_plt">
+        <plt:role name="creditCardDBService_role">
+            <plt:portType name="tns:creditCardDBService_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/creditCardDBService" schemaLocation="xsd/creditCardDBService_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="creditCardDBServiceSelect_inputParameters">
+        <wsdl:part name="creditCardDBServiceSelect_inputParameters" element="top:creditCardDBServiceSelect_ccNumInputParameters"/>
+    </wsdl:message>
+    <wsdl:message name="CreditcardsCollection_msg">
+        <wsdl:part name="CreditcardsCollection" element="top:CreditcardsCollection"/>
+    </wsdl:message>
+    <wsdl:portType name="creditCardDBService_ptt">
+        <wsdl:operation name="creditCardDBServiceSelect">
+            <wsdl:input message="tns:creditCardDBServiceSelect_inputParameters"/>
+            <wsdl:output message="tns:CreditcardsCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

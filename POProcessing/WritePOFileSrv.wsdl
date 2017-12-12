@@ -1,0 +1,29 @@
+<wsdl:definitions
+     name="WritePOFileSrv"
+     targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/file/POApp/POProcessing/WritePOFileSrv"
+     xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+     xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/file/POApp/POProcessing/WritePOFileSrv"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:imp1="http://www.example.org/ns/intorder"
+     xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+    >
+  <plt:partnerLinkType name="WriteFile_plt" >
+    <plt:role name="WriteFile_role" >
+      <plt:portType name="tns:WriteFile_ptt" />
+    </plt:role>
+  </plt:partnerLinkType>
+    <wsdl:types>
+      <schema targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/file/POApp/POProcessing/WritePOFileSrv"
+              xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.example.org/ns/intorder" schemaLocation="xsd/internalorder.xsd" />
+      </schema>
+    </wsdl:types>
+    <wsdl:message name="WriteFile_msg">
+        <wsdl:part name="body" element="imp1:order"/>
+    </wsdl:message>
+    <wsdl:portType name="WriteFile_ptt">
+        <wsdl:operation name="WriteFile">
+            <wsdl:input message="tns:WriteFile_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

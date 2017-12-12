@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PurchaseOrder xmlns="http://www.example.org/ns/porder">
+   <custID>custID1</custID>
+   <ID>ID2</ID>
+   <payOption>credit</payOption>
+   <shipChoice>two_day</shipChoice>
+   <status>status5</status>
+   <ccType>ccType6</ccType>
+   <ccNumber>ccNumber7</ccNumber>
+   <items>
+      <item>
+         <productId>productId8</productId>
+         <productName>productName9</productName>
+         <price>10</price>
+         <quantity>-0</quantity>
+      </item>
+      <item>
+         <productId>productId11</productId>
+         <productName>productName12</productName>
+         <price>13</price>
+         <quantity>-0</quantity>
+      </item>
+      <item>
+         <productId>productId14</productId>
+         <productName>productName15</productName>
+         <price>16</price>
+         <quantity>-0</quantity>
+      </item>
+   </items>
+</PurchaseOrder>

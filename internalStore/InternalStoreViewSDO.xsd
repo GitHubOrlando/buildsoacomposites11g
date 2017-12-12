@@ -1,0 +1,19 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<xsd:schema elementFormDefault="qualified" targetNamespace="/internalstoresdo/common/" sdoJava:package="internalstoresdo.common"
+     xmlns:sdoJava="commonj.sdo/java" xmlns="/internalstoresdo/common/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace="commonj.sdo/java" schemaLocation="sdoJava.xsd"/>
+    <xsd:complexType name="InternalStoreViewSDO">
+        <xsd:annotation>
+            <xsd:appinfo source="http://xmlns.oracle.com/adf/svc/metadata/">
+                <key xmlns="http://xmlns.oracle.com/adf/svc/metadata/">
+                    <attribute>ProdId</attribute>
+                </key>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="ProdId" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="Quantity" nillable="true" type="xsd:int"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="internalStoreViewSDO" type="InternalStoreViewSDO"/>
+</xsd:schema>
