@@ -16,7 +16,21 @@
          xmlns:ora="http://schemas.oracle.com/xpath/extension"
          xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
          xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
-         xmlns:ns1="/internalstoresdo/common/">
+         xmlns:ns1="/internalstoresdo/common/"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap"
+         xmlns:ns2="http://www.example.org/ns/store"
+         xmlns:ns3="/internalstoresdo/common/types/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <import namespace="http://xmlns.oracle.com/POApp/internalStore/manageInventory" location="manageInventory.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <!-- 
@@ -35,7 +49,7 @@
         <partnerLink name="internalStoreSDOService"
                      partnerLinkType="ns1:internalStoreSDOService"
                      myRole="internalStoreSDOService"/>
-        <partnerLink name="Service1" partnerLinkType="ns1:Service1"
+        <partnerLink name="InternalStoreSDO" partnerLinkType="ns1:Service1"
                      partnerRole="internalStoreSDOService"/>
     </partnerLinks>
 
@@ -51,6 +65,25 @@
 
         <!-- Reference to the message that will be sent back to the requester during callback -->
         <variable name="outputVariable" messageType="client:manageInventoryResponseMessage"/>
+        <variable name="operation" type="xsd:string"/>
+        <variable name="n" type="xsd:int"/>
+        <variable name="inStock" type="xsd:boolean"/>
+        <variable name="checkInternalStore_getInternalStoreView1_InputVariable"
+                  messageType="ns1:internalStoreSDOService_getInternalStoreView1"/>
+        <variable name="checkInternalStore_getInternalStoreView1_OutputVariable"
+                  messageType="ns1:internalStoreSDOService_getInternalStoreView1Response"/>
+        <variable name="updateInternalStore_updateInternalStoreView1_InputVariable"
+                  messageType="ns1:internalStoreSDOService_updateInternalStoreView1"/>
+        <variable name="updateInternalStore_updateInternalStoreView1_OutputVariable"
+                  messageType="ns1:internalStoreSDOService_updateInternalStoreView1Response"/>
+        <variable name="updateInternalStore_updateInternalStoreView1_OutputVariable_1"
+                  messageType="ns1:internalStoreSDOService_updateInternalStoreView1Response"/>
+        <variable name="callBackAcquire_acquireStockResponse_InputVariable"
+                  messageType="client:manageInventoryResponseMessage"/>
+        <variable name="callBackAcquire_acquireStockResponse_OutputVariable"
+                  messageType="client:manageInventoryResponseMessage"/>
+        <variable name="callBackAcquire_acquireStockResponse_InputVariable_1"
+                  messageType="client:manageInventoryResponseMessage"/>
     </variables>
 
     <!-- 
@@ -62,11 +95,158 @@
     -->
     <sequence name="main">
         <!-- Receive input from requestor. (Note: This maps to operation defined in manageInventory.wsdl) -->
-        <receive name="receiveInput" partnerLink="manageinventory_client" portType="client:manageInventory" operation="process" variable="inputVariable" createInstance="yes"/>
-
+        <pick name="PickOperation" createInstance="yes">
+            <onMessage variable="inputVariable"
+                       partnerLink="manageinventory_client"
+                       portType="client:manageInventory" operation="checkStock">
+                <assign name="check">
+                    <copy>
+                        <from>'check'</from>
+                        <to>$operation</to>
+                    </copy>
+                </assign>
+            </onMessage>
+            <onMessage variable="inputVariable"
+                       partnerLink="manageinventory_client"
+                       portType="client:manageInventory"
+                       operation="acquireStock">
+                <assign name="acquire">
+                    <copy>
+                        <from>'acquire'</from>
+                        <to>$operation</to>
+                    </copy>
+                </assign>
+            </onMessage>
+        </pick>
+        <assign name="iniVars">
+            <copy>
+                <from>true()</from>
+                <to>$inStock</to>
+            </copy>
+            <copy>
+                <from>count($inputVariable.payload/ns2:product)</from>
+                <to>$n</to>
+            </copy>
+        </assign>
+        <while name="WhileAllProductsInStock">
+            <condition>$n&gt;0 and $inStock</condition>
+            <sequence name="Sequence1">
+                <assign name="preCheck">
+                    <copy>
+                        <from>$inputVariable.payload/ns2:product[position()=$n]/ns2:prodId</from>
+                        <to>$checkInternalStore_getInternalStoreView1_InputVariable.parameters/ns3:prodId</to>
+                    </copy>
+                </assign>
+                <invoke name="checkInternalStore"
+                        partnerLink="InternalStoreSDO"
+                        portType="ns1:internalStoreSDOService"
+                        operation="getInternalStoreView1"
+                        inputVariable="checkInternalStore_getInternalStoreView1_InputVariable"
+                        outputVariable="checkInternalStore_getInternalStoreView1_OutputVariable"
+                        bpelx:invokeAsDetail="no"/>
+                <if name="If1">
+                    <documentation>
+                        <![CDATA[check]]>
+                    </documentation>
+                    <condition>$operation='check'</condition>
+                    <assign name="prodInStock">
+                        <copy>
+                            <from>number($checkInternalStore_getInternalStoreView1_OutputVariable.parameters/ns3:result/ns1:Quantity) &gt;=  number($inputVariable.payload/ns2:product[position()=$n]/ns2:qtyOrdered)</from>
+                            <to>$inStock</to>
+                        </copy>
+                    </assign>
+                    <else>
+                        <documentation>
+                            <![CDATA[acquirer]]>
+                        </documentation>
+                        <sequence name="Sequence2">
+                            <assign name="prepUpdate">
+                                <copy>
+                                    <from>$checkInternalStore_getInternalStoreView1_InputVariable.parameters/ns3:prodId</from>
+                                    <to>$updateInternalStore_updateInternalStoreView1_InputVariable.parameters/ns3:internalStoreView1/ns1:ProdId</to>
+                                </copy>
+                                <copy>
+                                    <from>number($checkInternalStore_getInternalStoreView1_OutputVariable.parameters/ns3:result/ns1:Quantity) - number($inputVariable.payload/ns2:product[position()=$n]/ns2:qtyOrdered)</from>
+                                    <to>$updateInternalStore_updateInternalStoreView1_InputVariable.parameters/ns3:internalStoreView1/ns1:Quantity</to>
+                                </copy>
+                            </assign>
+                            <invoke name="updateInternalStore"
+                                    partnerLink="InternalStoreSDO"
+                                    portType="ns1:internalStoreSDOService"
+                                    operation="updateInternalStoreView1"
+                                    inputVariable="updateInternalStore_updateInternalStoreView1_InputVariable"
+                                    outputVariable="updateInternalStore_updateInternalStoreView1_OutputVariable_1"
+                                    bpelx:invokeAsDetail="no"/>
+                        </sequence>
+                    </else>
+                </if>
+                <assign name="next">
+                    <copy>
+                        <from>$n - 1</from>
+                        <to>$n</to>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <if name="If2">
+            <documentation>
+                <![CDATA[chek]]>
+            </documentation>
+            <condition>$inStock</condition>
+            <sequence>
+                <if name="If_InStock">
+                    <documentation>
+                        <![CDATA[inStock]]>
+                    </documentation>
+                    <condition>$inStock</condition>
+                    <assign name="inStock">
+                        <copy>
+                            <from>'in stock'</from>
+                            <to>$outputVariable.payload/ns2:status</to>
+                        </copy>
+                    </assign>
+                    <else>
+                        <documentation>
+                            <![CDATA[outOfStock]]>
+                        </documentation>
+                        <assign name="setoutOfStock">
+                            <copy>
+                                <from>'out of stock'</from>
+                                <to>$outputVariable.payload/ns2:status</to>
+                            </copy>
+                        </assign>
+                    </else>
+                </if>
+                <invoke name="callbackCheck"
+                        partnerLink="manageinventory_client"
+                        portType="client:manageInventoryCallback"
+                        operation="checkStockResponse"
+                        inputVariable="outputVariable"
+                        bpelx:invokeAsDetail="no"/>
+            </sequence>
+            <else>
+                <documentation>
+                    <![CDATA[acquirer]]>
+                </documentation>
+                <sequence name="Sequence4">
+                    <assign name="setFullFill">
+                        <copy>
+                            <from>'Fulfilled'</from>
+                            <to>$outputVariable.payload/ns2:status</to>
+                        </copy>
+                    </assign>
+                    <invoke name="callBackAcquire"
+                            partnerLink="manageinventory_client"
+                            portType="client:manageInventoryCallback"
+                            operation="acquireStockResponse"
+                            inputVariable="callBackAcquire_acquireStockResponse_InputVariable_1"
+                            outputVariable="callBackAcquire_acquireStockResponse_OutputVariable"
+                            bpelx:invokeAsDetail="no"/>
+                </sequence>
+            </else>
+        </if>
         <!-- 
           Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
         -->
-        <invoke name="callbackClient" partnerLink="manageinventory_client" portType="client:manageInventoryCallback" operation="processResponse" inputVariable="outputVariable"/>
     </sequence>
 </process>

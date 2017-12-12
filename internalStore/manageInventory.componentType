@@ -12,7 +12,7 @@
            ui:wsdlLocation="internalStoreSDOServiceWrapper.wsdl">
     <interface.wsdl interface="/internalstoresdo/common/#wsdl.interface(internalStoreSDOService)"/>
   </service>
-  <reference name="Service1"
+  <reference name="InternalStoreSDO"
              ui:wsdlLocation="internalStoreSDOServiceWrapper1.wsdl">
     <interface.wsdl interface="/internalstoresdo/common/#wsdl.interface(internalStoreSDOService)"/>
   </reference>
