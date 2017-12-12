@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="manageStock"
+             targetNamespace="http://xmlns.oracle.com/POApp/onlineStore/manageStock"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:client="http://xmlns.oracle.com/POApp/onlineStore/manageStock"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	TYPE DEFINITION - List of services participating in this BPEL process
+	The default output of the BPEL designer uses strings as input and 
+	output to the BPEL Process. But you can define or import any XML 
+	Schema type and use them as part of the message types.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
+	<wsdl:types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://xmlns.oracle.com/POApp/onlineStore/manageStock" schemaLocation="xsd/manageStock.xsd" />
+		</schema>
+	</wsdl:types>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MESSAGE TYPE DEFINITION - Definition of the message types used as 
+	part of the port type defintions
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
+	<wsdl:message name="manageStockRequestMessage">
+		<wsdl:part name="payload" element="client:process"/>
+	</wsdl:message>
+
+	<wsdl:message name="manageStockResponseMessage">
+		<wsdl:part name="payload" element="client:processResponse"/>
+	</wsdl:message>
+
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PORT TYPE DEFINITION - A port type groups a set of operations into
+	a logical service unit.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- portType implemented by the manageStock BPEL process -->
+	<wsdl:portType name="manageStock">
+		<wsdl:operation name="checkStock">
+			<wsdl:input message="client:manageStockRequestMessage"/>
+		</wsdl:operation>
+  <wsdl:operation name="acquireStock">
+   <wsdl:input message="client:manageStockRequestMessage"/>
+  </wsdl:operation>
+ </wsdl:portType>
+
+	<!-- portType implemented by the requester of manageStock BPEL process
+	for asynchronous callback purposes
+	-->
+	<wsdl:portType name="manageStockCallback">
+		<wsdl:operation name="checkStockResponse">
+			<wsdl:input message="client:manageStockResponseMessage"/>
+		</wsdl:operation>
+  <wsdl:operation name="acquireStockResponse">
+   <wsdl:input message="client:manageStockResponseMessage"/>
+  </wsdl:operation>
+ </wsdl:portType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	the manageStock partnerLinkType binds the provider and
+	requester portType into an asynchronous conversation.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<plnk:partnerLinkType name="manageStock">
+		<plnk:role name="manageStockProvider" portType="client:manageStock"/>
+		<plnk:role name="manageStockRequester" portType="client:manageStockCallback"/>
+	</plnk:partnerLinkType>
+</wsdl:definitions>
