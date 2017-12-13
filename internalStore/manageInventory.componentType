@@ -8,10 +8,6 @@
     <interface.wsdl interface="http://xmlns.oracle.com/POApp/internalStore/manageInventory#wsdl.interface(manageInventory)"
                     callbackInterface="http://xmlns.oracle.com/POApp/internalStore/manageInventory#wsdl.interface(manageInventoryCallback)"/>
   </service>
-  <service name="internalStoreSDOService"
-           ui:wsdlLocation="internalStoreSDOServiceWrapper.wsdl">
-    <interface.wsdl interface="/internalstoresdo/common/#wsdl.interface(internalStoreSDOService)"/>
-  </service>
   <reference name="InternalStoreSDO"
              ui:wsdlLocation="internalStoreSDOServiceWrapper1.wsdl">
     <interface.wsdl interface="/internalstoresdo/common/#wsdl.interface(internalStoreSDOService)"/>

@@ -17,4 +17,12 @@
   <reference name="FedExJmsService" ui:wsdlLocation="FedExJmsService.wsdl">
     <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/jms/POApp/POProcessing/FedExJmsService#wsdl.interface(Produce_Message_ptt)"/>
   </reference>
+  <reference name="internalStore" ui:wsdlLocation="manageInventory.wsdl">
+    <interface.wsdl interface="http://xmlns.oracle.com/POApp/internalStore/manageInventory#wsdl.interface(manageInventory)"
+                    callbackInterface="http://xmlns.oracle.com/POApp/internalStore/manageInventory#wsdl.interface(manageInventoryCallback)"/>
+  </reference>
+  <reference name="onlineStore" ui:wsdlLocation="manageStock.wsdl">
+    <interface.wsdl interface="http://xmlns.oracle.com/POApp/onlineStore/manageStock#wsdl.interface(manageStock)"
+                    callbackInterface="http://xmlns.oracle.com/POApp/onlineStore/manageStock#wsdl.interface(manageStockCallback)"/>
+  </reference>
 </componentType>

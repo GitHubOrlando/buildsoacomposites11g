@@ -13,8 +13,6 @@
   <import namespace="http://xmlns.oracle.com/POApp/internalStore/manageInventory"
           location="manageInventory.wsdl" importType="wsdl"/>
   <import namespace="/internalstoresdo/common/"
-          location="internalStoreSDOServiceWrapper.wsdl" importType="wsdl"/>
-  <import namespace="/internalstoresdo/common/"
           location="http://soabpm-vm:7001/internalStoreSDO-app/internalStoreSDOService?WSDL"
           importType="wsdl"/>
   <import namespace="/internalstoresdo/common/"

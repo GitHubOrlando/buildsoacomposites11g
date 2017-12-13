@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+     name="manageStock"
+     targetNamespace="http://xmlns.oracle.com/POApp/onlineStore/manageStock"
+     xmlns:ns1="http://www.example.org/ns/store"
+     xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+     xmlns:client="http://xmlns.oracle.com/POApp/onlineStore/manageStock"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    >
+    <wsdl:documentation>
+        <abstractWSDL>manageStock.wsdl</abstractWSDL>
+    </wsdl:documentation>
+    <plnk:partnerLinkType name="manageStock">
+        <plnk:role name="manageStockProvider" portType="client:manageStock"/>
+        <plnk:role name="manageStockRequester" portType="client:manageStockCallback"/>
+    </plnk:partnerLinkType>
+    <wsp:Policy xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+         wsu:Id="wsaddr_policy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+        <wsaw:UsingAddressing xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"/>
+    </wsp:Policy>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.example.org/ns/store" schemaLocation="xsd/storeinfo_1.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="manageStockRequestMessage">
+        <wsdl:part name="payload" element="ns1:StoreRequest"/>
+    </wsdl:message>
+    <wsdl:message name="manageStockResponseMessage">
+        <wsdl:part name="payload" element="ns1:StoreResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="manageStock">
+        <wsdl:operation name="checkStock">
+            <wsdl:input message="client:manageStockRequestMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="acquireStock">
+            <wsdl:input message="client:manageStockRequestMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="manageStockCallback">
+        <wsdl:operation name="checkStockResponse">
+            <wsdl:input message="client:manageStockResponseMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="acquireStockResponse">
+            <wsdl:input message="client:manageStockResponseMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="manageStockCallbackBinding" type="client:manageStockCallback">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="checkStockResponse">
+            <soap:operation style="document" soapAction="checkStockResponse"/>
+            <wsdl:input>
+                <soap:body use="literal" namespace="http://xmlns.oracle.com/POApp/onlineStore/manageStock"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="acquireStockResponse">
+            <soap:operation style="document" soapAction="acquireStockResponse"/>
+            <wsdl:input>
+                <soap:body use="literal" namespace="http://xmlns.oracle.com/POApp/onlineStore/manageStock"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="manageStockBinding" type="client:manageStock">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#wsaddr_policy"
+             wsdl:required="false"/>
+        <wsdl:operation name="checkStock">
+            <soap:operation style="document" soapAction="checkStock"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="acquireStock">
+            <soap:operation style="document" soapAction="acquireStock"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="managestock_client_ep">
+        <wsdl:port name="manageStock_pt" binding="client:manageStockBinding">
+            <soap:address location="http://soabpm-vm:7001/soa-infra/services/default/onlineStore/managestock_client_ep"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -16,7 +16,21 @@
          xmlns:ora="http://schemas.oracle.com/xpath/extension"
          xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
          xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
-         xmlns:ns1="/onlinestoresdo/common/">
+         xmlns:ns1="/onlinestoresdo/common/"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap"
+         xmlns:ns2="http://www.example.org/ns/store"
+         xmlns:ns3="/onlinestoresdo/common/types/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <import namespace="http://xmlns.oracle.com/POApp/onlineStore/manageStock" location="manageStock.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <!-- 
@@ -49,6 +63,14 @@
 
         <!-- Reference to the message that will be sent back to the requester during callback -->
         <variable name="outputVariable" messageType="client:manageStockResponseMessage"/>
+        <variable name="OnMessage_checkStock_InputVariable"
+                  messageType="client:manageStockRequestMessage"/>
+        <variable name="OnMessage_acquireStock_InputVariable"
+                  messageType="client:manageStockRequestMessage"/>
+        <variable name="operation" type="xsd:string"/>
+        <variable name="inStock" type="xsd:boolean"/>
+        <variable name="checkOnlineStore_getOnlineStoreView1_OutputVariable"
+                  messageType="ns1:OnlineStoreSDOService_getOnlineStoreView1Response"/>
     </variables>
 
     <!-- 
@@ -59,12 +81,162 @@
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     -->
     <sequence name="main">
-        <!-- Receive input from requestor. (Note: This maps to operation defined in manageStock.wsdl) -->
-        <receive name="receiveInput" partnerLink="managestock_client" portType="client:manageStock" operation="process" variable="inputVariable" createInstance="yes"/>
-
+        <!-- Receive input from requestor. (Note: This maps to operation defined in manageStock.wsdl) --><pick name="Pick1"
+                                                                                                               createInstance="yes">
+            <onMessage variable="inputVariable"
+                       partnerLink="managestock_client"
+                       portType="client:manageStock" operation="checkStock">
+                <assign name="check">
+                    <copy>
+                        <from>'check'</from>
+                        <to>$operation</to>
+                    </copy>
+                </assign>
+            </onMessage>
+            <onMessage variable="inputVariable"
+                       partnerLink="managestock_client"
+                       portType="client:manageStock" operation="acquireStock">
+                <assign name="acquire">
+                    <copy>
+                        <from>'acquire'</from>
+                        <to>$operation</to>
+                    </copy>
+                </assign>
+            </onMessage>
+        </pick>
+        <assign name="inStock">
+            <copy>
+                <from>true()</from>
+                <to>$inStock</to>
+            </copy>
+        </assign>
+        <forEach parallel="yes" counterName="i"
+                 name="ForEachProduct">
+            <startCounterValue>1</startCounterValue>
+            <finalCounterValue>count($inputVariable.payload/ns2:product)</finalCounterValue>
+            <scope name="Scope1">
+                <variables>
+                    <variable name="start" type="xsd:int"/>
+                    <variable name="final" type="xsd:int"/>
+                    <variable name="checkOnlineStore_getOnlineStoreView1_InputVariable_1"
+                              messageType="ns1:OnlineStoreSDOService_getOnlineStoreView1"/>
+                    <variable name="checkOnlineStore_getOnlineStoreView1_OutputVariable_1"
+                              messageType="ns1:OnlineStoreSDOService_getOnlineStoreView1Response"/>
+                    <variable name="updateOnlineStore_updateOnlineStoreView1_InputVariable_1"
+                              messageType="ns1:OnlineStoreSDOService_updateOnlineStoreView1"/>
+                    <variable name="updateOnlineStore_updateOnlineStoreView1_OutputVariable"
+                              messageType="ns1:OnlineStoreSDOService_updateOnlineStoreView1Response"/>
+                </variables>
+                <sequence name="Sequence1">
+                    <assign name="preCheck">
+                        <copy>
+                            <from>$inputVariable.payload/ns2:product[position()=$i]/ns2:prodId</from>
+                            <to>$checkOnlineStore_getOnlineStoreView1_InputVariable_1.parameters/ns3:prodId</to>
+                        </copy>
+                    </assign>
+                    <invoke name="checkOnlineStore"
+                            partnerLink="OnlineStoreService"
+                            portType="ns1:OnlineStoreSDOService"
+                            operation="getOnlineStoreView1"
+                            inputVariable="checkOnlineStore_getOnlineStoreView1_InputVariable_1"
+                            outputVariable="checkOnlineStore_getOnlineStoreView1_OutputVariable_1"
+                            bpelx:invokeAsDetail="no"/>
+                    <if name="If1">
+                        <documentation>
+                            <![CDATA[check]]>
+                        </documentation>
+                        <condition>$operation='check'</condition>
+                        <assign name="prodInStock">
+                            <copy>
+                                <from>number($checkOnlineStore_getOnlineStoreView1_OutputVariable_1.parameters/ns3:result/ns1:Quantity) &gt;=  number($inputVariable.payload/ns2:product[position()=$i]/ns2:qtyOrdered)</from>
+                                <to>$inStock</to>
+                            </copy>
+                        </assign>
+                        <else>
+                            <documentation>
+                                <![CDATA[acquire]]>
+                            </documentation>
+                            <sequence name="Sequence2">
+                                <assign name="prepUpdate">
+                                    <copy>
+                                        <from>$inputVariable.payload/ns2:product[position()=$i]/ns2:prodId</from>
+                                        <to>$updateOnlineStore_updateOnlineStoreView1_InputVariable_1.parameters/ns3:onlineStoreView1/ns1:ProdId</to>
+                                    </copy>
+                                    <copy>
+                                        <from>number($checkOnlineStore_getOnlineStoreView1_OutputVariable_1.parameters/ns3:result/ns1:Quantity) - number($inputVariable.payload/ns2:product[position()=$i]/ns2:qtyOrdered)</from>
+                                        <to>$updateOnlineStore_updateOnlineStoreView1_InputVariable_1.parameters/ns3:onlineStoreView1/ns1:Quantity</to>
+                                    </copy>
+                                </assign>
+                                <invoke name="updateOnlineStore"
+                                        partnerLink="OnlineStoreService"
+                                        portType="ns1:OnlineStoreSDOService"
+                                        operation="updateOnlineStoreView1"
+                                        inputVariable="updateOnlineStore_updateOnlineStoreView1_InputVariable_1"
+                                        outputVariable="updateOnlineStore_updateOnlineStoreView1_OutputVariable"
+                                        bpelx:invokeAsDetail="no"/>
+                            </sequence>
+                        </else>
+                    </if>
+                </sequence>
+            </scope>
+        </forEach>
+        <if name="If2"
+            xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+      <documentation>
+         <![CDATA[chek]]>
+      </documentation>
+      <condition>$inStock</condition>
+      <sequence>
+         <if name="If_InStock">
+            <documentation>
+               <![CDATA[inStock]]>
+            </documentation>
+            <condition>$inStock</condition>
+            <assign name="inStock">
+               <copy>
+                  <from>'in stock'</from>
+                  <to>$outputVariable.payload/ns2:status</to>
+               </copy>
+            </assign>
+            <else>
+               <documentation>
+                  <![CDATA[outOfStock]]>
+               </documentation>
+               <assign name="setoutOfStock">
+                  <copy>
+                     <from>'out of stock'</from>
+                     <to>$outputVariable.payload/ns2:status</to>
+                  </copy>
+               </assign>
+            </else>
+         </if>
+         
+      <invoke name="callbackClient" partnerLink="managestock_client"
+              portType="client:manageStockCallback"
+              operation="checkStockResponse"
+              inputVariable="outputVariable" bpelx:invokeAsDetail="no"/></sequence>
+      <else>
+         <documentation>
+            <![CDATA[acquirer]]>
+         </documentation>
+         <sequence name="Sequence4">
+            <assign name="setFullFill">
+               <copy>
+                  <from>'Fulfilled'</from>
+                  <to>$outputVariable.payload/ns2:status</to>
+               </copy>
+            </assign>
+            <invoke name="callBackAcquire" partnerLink="managestock_client"
+                    portType="client:manageStockCallback"
+                    operation="acquireStockResponse"
+                    inputVariable="outputVariable"
+                    xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+                    bpelx:invokeAsDetail="no"/>
+         </sequence>
+      </else>
+   </if>
         <!-- 
           Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
         -->
-        <invoke name="callbackClient" partnerLink="managestock_client" portType="client:manageStockCallback" operation="processResponse" inputVariable="outputVariable"/>
     </sequence>
 </process>

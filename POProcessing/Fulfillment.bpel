@@ -30,7 +30,10 @@
          xmlns:ns2="http://xmlns.oracle.com/pcbpel/adapter/jms/POApp/POProcessing/UPSJmsService"
          xmlns:ns3="http://xmlns.oracle.com/pcbpel/adapter/jms/POApp/POProcessing/USPSJmsService"
          xmlns:ns4="http://xmlns.oracle.com/pcbpel/adapter/jms/POApp/POProcessing/FedExJmsService"
-         xmlns:ns5="http://www.example.org/ns/intorder">
+         xmlns:ns5="http://www.example.org/ns/intorder"
+         xmlns:ns6="http://xmlns.oracle.com/POApp/internalStore/manageInventory"
+         xmlns:ns7="http://xmlns.oracle.com/POApp/onlineStore/manageStock"
+         xmlns:ns8="http://www.example.org/ns/store">
 
     <import namespace="http://xmlns.oracle.com/POApp/POProcessing/Fulfillment" location="Fulfillment.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <!-- 
@@ -55,6 +58,12 @@
         <partnerLink name="FedExJmsService"
                      partnerLinkType="ns4:Produce_Message_plt"
                      partnerRole="Produce_Message_role"/>
+        <partnerLink name="internalStore" partnerLinkType="ns6:manageInventory"
+                     partnerRole="manageInventoryProvider"
+                     myRole="manageInventoryRequester"/>
+        <partnerLink name="onlineStore" partnerLinkType="ns7:manageStock"
+                     partnerRole="manageStockProvider"
+                     myRole="manageStockRequester"/>
     </partnerLinks>
 
     <!-- 
@@ -87,6 +96,9 @@
                     <bpelx:property name="userLabel">
                         <![CDATA[insertOrder]]>
                     </bpelx:property>
+                    <bpelx:property name="userImage">
+                        <![CDATA[financialsystem_lg.png]]>
+                    </bpelx:property>
                 </bpelx:general>
             </bpelx:annotation>
             <empty name="Empty1"/>
@@ -99,128 +111,268 @@
                     </bpelx:property>
                 </bpelx:general>
             </bpelx:annotation>
-            <empty name="Empty2"/>
-        </scope>
-        <scope name="ShipOrder" exitOnStandardFault="no">
             <variables>
-                <variable name="UPS_Produce_Message_InputVariable"
-                          messageType="ns2:Produce_Message_msg"/>
-                <variable name="USPS_Produce_Message_InputVariable"
-                          messageType="ns3:Produce_Message_msg"/>
-                <variable name="FEDEX_Produce_Message_InputVariable"
-                          messageType="ns4:Produce_Message_msg"/>
+                <variable name="checkInternalStore_checkStock_InputVariable"
+                          messageType="ns6:manageInventoryRequestMessage"/>
+                <variable name="ReceiveInStock_checkStock_InputVariable"
+                          messageType="ns6:manageInventoryRequestMessage"/>
+                <variable name="checkOnlineStore_checkStock_InputVariable"
+                          messageType="ns7:manageStockRequestMessage"/>
+                <variable name="receiveInternalStore_checkStockResponse_InputVariable"
+                          messageType="ns6:manageInventoryResponseMessage"/>
+                <variable name="ReceiveOnlineStore_checkStockResponse_InputVariable"
+                          messageType="ns7:manageStockResponseMessage"/>
+                <variable name="acquirerInternalStore_acquireStock_InputVariable"
+                          messageType="ns6:manageInventoryRequestMessage"/>
+                <variable name="ReceiveInternalStore_acquireStockResponse_InputVariable"
+                          messageType="ns6:manageInventoryResponseMessage"/>
+                <variable name="acquirerOnlineStore_acquireStock_InputVariable"
+                          messageType="ns7:manageStockRequestMessage"/>
+                <variable name="ReceiveOnlineStore_acquireStockResponse_InputVariable"
+                          messageType="ns7:manageStockResponseMessage"/>
             </variables>
             <sequence>
-                <if name="IfShipMethod">
-                    <documentation>
-                        <![CDATA[UPS]]>
-                    </documentation>
-                    <condition>$inputVariable.payload/ns5:shipMethod = 'two_day'</condition>
-                    <sequence name="Sequence2">
-                        <assign name="prepUPS">
+                <flow name="checkStock">
+                    <sequence name="Sequence7">
+                        <assign name="prepInternalCheck">
+                            <bpelx:annotation>
+                                <bpelx:pattern patternName="bpelx:transformation"/>
+                            </bpelx:annotation>
                             <copy>
-                                <from>$inputVariable.payload/ns5:orderId</from>
-                                <to>$UPS_Produce_Message_InputVariable.body/ns1:orderId</to>
-                            </copy>
-                            <copy>
-                                <from>$inputVariable.payload/ns5:customerId</from>
-                                <to>$UPS_Produce_Message_InputVariable.body/ns1:custName</to>
-                            </copy>
-                            <extensionAssignOperation>
-                                <bpelx:insertAfter>
-                                    <bpelx:from>' (UPS) '</bpelx:from>
-                                    <bpelx:to>$UPS_Produce_Message_InputVariable.body/ns1:custName</bpelx:to>
-                                </bpelx:insertAfter>
-                            </extensionAssignOperation>
-                            <copy>
-                                <from>'completed'</from>
-                                <to>$outputVariable.payload/ns1:shipStatus</to>
-                            </copy>
-                            <copy>
-                                <from>'UPS'</from>
-                                <to>$outputVariable.payload/ns1:carrier</to>
+                                <from>ora:doXSLTransformForDoc("xsl/TrfInternalStore.xsl", $inputVariable.payload)</from>
+                                <to variable="checkInternalStore_checkStock_InputVariable"
+                                    part="payload"/>
                             </copy>
                         </assign>
-                        <invoke name="UPS"
-                                partnerLink="UPSJmsService"
-                                portType="ns2:Produce_Message_ptt"
-                                operation="Produce_Message"
-                                inputVariable="UPS_Produce_Message_InputVariable"
-                                bpelx:invokeAsDetail="no"/>
+                        <invoke name="checkInternalStore"
+                                bpelx:invokeAsDetail="no"
+                                partnerLink="internalStore"
+                                portType="ns6:manageInventory"
+                                operation="checkStock"
+                                inputVariable="checkInternalStore_checkStock_InputVariable"/>
+                        <receive name="receiveInternalStore" createInstance="no"
+                                 partnerLink="internalStore"
+                                 portType="ns6:manageInventoryCallback"
+                                 operation="checkStockResponse"
+                                 variable="receiveInternalStore_checkStockResponse_InputVariable"/>
+                    </sequence>
+                    <sequence name="Sequence6">
+                        <assign name="prepOnlineCheck">
+                            <bpelx:annotation>
+                                <bpelx:pattern patternName="bpelx:transformation"/>
+                            </bpelx:annotation>
+                            <copy>
+                                <from>ora:doXSLTransformForDoc("xsl/TrfOnlineStore2.xsl", $inputVariable.payload)</from>
+                                <to variable="checkOnlineStore_checkStock_InputVariable"
+                                    part="payload"/>
+                            </copy>
+                        </assign>
+                        <invoke name="checkOnlineStore"
+                                bpelx:invokeAsDetail="no"
+                                partnerLink="onlineStore"
+                                portType="ns7:manageStock"
+                                operation="checkStock"
+                                inputVariable="checkOnlineStore_checkStock_InputVariable"/>
+                        <receive name="ReceiveOnlineStore" createInstance="no"
+                                 partnerLink="onlineStore"
+                                 portType="ns7:manageStockCallback"
+                                 operation="checkStockResponse"
+                                 variable="ReceiveOnlineStore_checkStockResponse_InputVariable"/>
+                    </sequence>
+                </flow>
+                <if name="If1">
+                    <documentation>
+                        <![CDATA[internalStore]]>
+                    </documentation>
+                    <condition>$receiveInternalStore_checkStockResponse_InputVariable.payload/ns8:status = 'In Stock'</condition>
+                    <sequence name="Sequence8">
+                        <assign name="prepAcquirerInternalStore">
+                            <copy>
+                                <from>$checkInternalStore_checkStock_InputVariable.payload</from>
+                                <to>$acquirerInternalStore_acquireStock_InputVariable.payload</to>
+                            </copy>
+                        </assign>
+                        <invoke name="acquirerInternalStore" bpelx:invokeAsDetail="no"
+                                partnerLink="internalStore"
+                                portType="ns6:manageInventory"
+                                operation="acquireStock"
+                                inputVariable="acquirerInternalStore_acquireStock_InputVariable"/>
+                        <receive name="ReceiveInternalStore"
+                                 createInstance="no"
+                                 partnerLink="internalStore"
+                                 portType="ns6:manageInventoryCallback"
+                                 operation="acquireStockResponse"
+                                 variable="ReceiveInternalStore_acquireStockResponse_InputVariable"/>
                     </sequence>
                     <elseif>
                         <documentation>
-                            <![CDATA[USPS]]>
+                            <![CDATA[OnlineStore]]>
                         </documentation>
-                        <condition>$inputVariable.payload/ns5:shipMethod = 'five_day'</condition>
-                        <sequence name="Sequence3">
-                            <assign name="prepUSPS">
+                        <condition>$ReceiveOnlineStore_checkStockResponse_InputVariable.payload/ns8:status= 'In Stock'</condition>
+                        <sequence name="Sequence9">
+                            <assign name="prepAcquirerOnlineStore">
                                 <copy>
-                                    <from>$inputVariable.payload/ns5:customerId</from>
-                                    <to>$USPS_Produce_Message_InputVariable.body/ns1:custName</to>
-                                </copy>
-                                <copy>
-                                    <from>$inputVariable.payload/ns5:orderId</from>
-                                    <to>$USPS_Produce_Message_InputVariable.body/ns1:orderId</to>
-                                </copy>
-                                <copy>
-                                    <from>' (USPS)'</from>
-                                    <to>$USPS_Produce_Message_InputVariable.body/ns1:custName</to>
-                                </copy>
-                                <copy>
-                                    <from>'completed'</from>
-                                    <to>$outputVariable.payload/ns1:shipStatus</to>
-                                </copy>
-                                <copy>
-                                    <from>'USPS'</from>
-                                    <to>$outputVariable.payload/ns1:carrier</to>
+                                    <from>$checkOnlineStore_checkStock_InputVariable.payload</from>
+                                    <to>$acquirerOnlineStore_acquireStock_InputVariable.payload</to>
                                 </copy>
                             </assign>
-                            <invoke name="USPS"
-                                    partnerLink="USPSJmsService"
-                                    portType="ns3:Produce_Message_ptt"
-                                    operation="Produce_Message"
-                                    inputVariable="USPS_Produce_Message_InputVariable"
-                                    bpelx:invokeAsDetail="no"/>
+                            <invoke name="acquirerOnlineStore" bpelx:invokeAsDetail="no"
+                                    partnerLink="onlineStore"
+                                    portType="ns7:manageStock"
+                                    operation="acquireStock"
+                                    inputVariable="acquirerOnlineStore_acquireStock_InputVariable"/>
+                            <receive name="ReceiveOnlineStore"
+                                     createInstance="no"
+                                     partnerLink="onlineStore"
+                                     portType="ns7:manageStockCallback"
+                                     operation="acquireStockResponse"
+                                     variable="ReceiveOnlineStore_acquireStockResponse_InputVariable"/>
                         </sequence>
                     </elseif>
                     <else>
                         <documentation>
-                            <![CDATA[FEDEX]]>
+                            <![CDATA[WaitingList]]>
                         </documentation>
-                        <sequence name="Sequence4">
-                            <assign name="prepFedex">
-                                <copy>
-                                    <from>$inputVariable.payload/ns5:customerId</from>
-                                    <to>$FEDEX_Produce_Message_InputVariable.body/ns1:custName</to>
-                                </copy>
+                        <assign name="WaitingList">
+                            <copy>
+                                <from>'Waiting List'</from>
+                                <to>$outputVariable.payload/ns1:shipStatus</to>
+                            </copy>
+                        </assign>
+                    </else>
+                </if>
+            </sequence>
+        </scope>
+        <if name="If2">
+            <documentation>
+                <![CDATA[completed]]>
+            </documentation>
+            <condition>$outputVariable.payload/ns1:shipStatus != 'Waiting List'</condition>
+            <scope name="ShipOrder" exitOnStandardFault="no">
+                <variables>
+                    <variable name="UPS_Produce_Message_InputVariable"
+                              messageType="ns2:Produce_Message_msg"/>
+                    <variable name="USPS_Produce_Message_InputVariable"
+                              messageType="ns3:Produce_Message_msg"/>
+                    <variable name="FEDEX_Produce_Message_InputVariable"
+                              messageType="ns4:Produce_Message_msg"/>
+                </variables>
+                <sequence>
+                    <if name="IfShipMethod">
+                        <documentation>
+                            <![CDATA[UPS]]>
+                        </documentation>
+                        <condition>$inputVariable.payload/ns5:shipMethod = 'two_day'</condition>
+                        <sequence name="Sequence2">
+                            <assign name="prepUPS">
                                 <copy>
                                     <from>$inputVariable.payload/ns5:orderId</from>
-                                    <to>$FEDEX_Produce_Message_InputVariable.body/ns1:orderId</to>
+                                    <to>$UPS_Produce_Message_InputVariable.body/ns1:orderId</to>
                                 </copy>
                                 <copy>
-                                    <from>' (FEDEX)'</from>
-                                    <to>$FEDEX_Produce_Message_InputVariable.body/ns1:custName</to>
+                                    <from>$inputVariable.payload/ns5:customerId</from>
+                                    <to>$UPS_Produce_Message_InputVariable.body/ns1:custName</to>
                                 </copy>
+                                <extensionAssignOperation>
+                                    <bpelx:insertAfter>
+                                        <bpelx:from>' (UPS) '</bpelx:from>
+                                        <bpelx:to>$UPS_Produce_Message_InputVariable.body/ns1:custName</bpelx:to>
+                                    </bpelx:insertAfter>
+                                </extensionAssignOperation>
                                 <copy>
                                     <from>'completed'</from>
                                     <to>$outputVariable.payload/ns1:shipStatus</to>
                                 </copy>
                                 <copy>
-                                    <from>'FEDEX'</from>
+                                    <from>'UPS'</from>
                                     <to>$outputVariable.payload/ns1:carrier</to>
                                 </copy>
                             </assign>
-                            <invoke name="FEDEX" bpelx:invokeAsDetail="no"
-                                    partnerLink="FedExJmsService"
-                                    portType="ns4:Produce_Message_ptt"
+                            <invoke name="UPS" partnerLink="UPSJmsService"
+                                    portType="ns2:Produce_Message_ptt"
                                     operation="Produce_Message"
-                                    inputVariable="FEDEX_Produce_Message_InputVariable"/>
+                                    inputVariable="UPS_Produce_Message_InputVariable"
+                                    bpelx:invokeAsDetail="no"/>
                         </sequence>
-                    </else>
-                </if>
-            </sequence>
-        </scope>
+                        <elseif>
+                            <documentation>
+                                <![CDATA[USPS]]>
+                            </documentation>
+                            <condition>$inputVariable.payload/ns5:shipMethod = 'five_day'</condition>
+                            <sequence name="Sequence3">
+                                <assign name="prepUSPS">
+                                    <copy>
+                                        <from>$inputVariable.payload/ns5:customerId</from>
+                                        <to>$USPS_Produce_Message_InputVariable.body/ns1:custName</to>
+                                    </copy>
+                                    <copy>
+                                        <from>$inputVariable.payload/ns5:orderId</from>
+                                        <to>$USPS_Produce_Message_InputVariable.body/ns1:orderId</to>
+                                    </copy>
+                                    <copy>
+                                        <from>' (USPS)'</from>
+                                        <to>$USPS_Produce_Message_InputVariable.body/ns1:custName</to>
+                                    </copy>
+                                    <copy>
+                                        <from>'completed'</from>
+                                        <to>$outputVariable.payload/ns1:shipStatus</to>
+                                    </copy>
+                                    <copy>
+                                        <from>'USPS'</from>
+                                        <to>$outputVariable.payload/ns1:carrier</to>
+                                    </copy>
+                                </assign>
+                                <invoke name="USPS" partnerLink="USPSJmsService"
+                                        portType="ns3:Produce_Message_ptt"
+                                        operation="Produce_Message"
+                                        inputVariable="USPS_Produce_Message_InputVariable"
+                                        bpelx:invokeAsDetail="no"/>
+                            </sequence>
+                        </elseif>
+                        <else>
+                            <documentation>
+                                <![CDATA[FEDEX]]>
+                            </documentation>
+                            <sequence name="Sequence4">
+                                <assign name="prepFedex">
+                                    <copy>
+                                        <from>$inputVariable.payload/ns5:customerId</from>
+                                        <to>$FEDEX_Produce_Message_InputVariable.body/ns1:custName</to>
+                                    </copy>
+                                    <copy>
+                                        <from>$inputVariable.payload/ns5:orderId</from>
+                                        <to>$FEDEX_Produce_Message_InputVariable.body/ns1:orderId</to>
+                                    </copy>
+                                    <copy>
+                                        <from>' (FEDEX)'</from>
+                                        <to>$FEDEX_Produce_Message_InputVariable.body/ns1:custName</to>
+                                    </copy>
+                                    <copy>
+                                        <from>'completed'</from>
+                                        <to>$outputVariable.payload/ns1:shipStatus</to>
+                                    </copy>
+                                    <copy>
+                                        <from>'FEDEX'</from>
+                                        <to>$outputVariable.payload/ns1:carrier</to>
+                                    </copy>
+                                </assign>
+                                <invoke name="FEDEX" bpelx:invokeAsDetail="no"
+                                        partnerLink="FedExJmsService"
+                                        portType="ns4:Produce_Message_ptt"
+                                        operation="Produce_Message"
+                                        inputVariable="FEDEX_Produce_Message_InputVariable"/>
+                            </sequence>
+                        </else>
+                    </if>
+                </sequence>
+            </scope>
+            <else>
+                <documentation>
+                    <![CDATA[WaitinList]]>
+                </documentation>
+                <empty name="Empty2"/>
+            </else>
+        </if>
         <!-- 
           Asynchronous callback to the requester. (Note: the callback location and correlation id is transparently handled using WS-addressing.)
         -->

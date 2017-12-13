@@ -46,9 +46,6 @@
       with the client role are automatically set using WS-Addressing.
     -->
         <partnerLink name="manageinventory_client" partnerLinkType="client:manageInventory" myRole="manageInventoryProvider" partnerRole="manageInventoryRequester"/>
-        <partnerLink name="internalStoreSDOService"
-                     partnerLinkType="ns1:internalStoreSDOService"
-                     myRole="internalStoreSDOService"/>
         <partnerLink name="InternalStoreSDO" partnerLinkType="ns1:Service1"
                      partnerRole="internalStoreSDOService"/>
     </partnerLinks>
@@ -239,7 +236,7 @@
                             partnerLink="manageinventory_client"
                             portType="client:manageInventoryCallback"
                             operation="acquireStockResponse"
-                            inputVariable="callBackAcquire_acquireStockResponse_InputVariable_1"
+                            inputVariable="outputVariable"
                             outputVariable="callBackAcquire_acquireStockResponse_OutputVariable"
                             bpelx:invokeAsDetail="no"/>
                 </sequence>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+     name="manageInventory"
+     targetNamespace="http://xmlns.oracle.com/POApp/internalStore/manageInventory"
+     xmlns:ns1="http://www.example.org/ns/store"
+     xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+     xmlns:client="http://xmlns.oracle.com/POApp/internalStore/manageInventory"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <plnk:partnerLinkType name="manageInventory">
+        <plnk:role name="manageInventoryProvider" portType="client:manageInventory"/>
+        <plnk:role name="manageInventoryRequester" portType="client:manageInventoryCallback"/>
+    </plnk:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://www.example.org/ns/store" schemaLocation="xsd/storeinfo.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="manageInventoryResponseMessage">
+        <wsdl:part name="payload" element="ns1:StoreResponse"/>
+    </wsdl:message>
+    <wsdl:message name="manageInventoryRequestMessage">
+        <wsdl:part name="payload" element="ns1:StoreRequest"/>
+    </wsdl:message>
+    <wsdl:portType name="manageInventoryCallback">
+        <wsdl:operation name="checkStockResponse">
+            <wsdl:input message="client:manageInventoryResponseMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="acquireStockResponse">
+            <wsdl:input message="client:manageInventoryResponseMessage"/>
+            <wsdl:output message="client:manageInventoryResponseMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="manageInventory">
+        <wsdl:operation name="checkStock">
+            <wsdl:input message="client:manageInventoryRequestMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="acquireStock">
+            <wsdl:input message="client:manageInventoryRequestMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>
