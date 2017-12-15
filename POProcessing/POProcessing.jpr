@@ -75,7 +75,7 @@
    <value n="Fulfillment_ProcessName" v="Fulfillment"/>
    <value n="Fulfillment_Template" v="BPEL_ASYNC_PROCESS"/>
    <value n="Fulfillment_wsdl" v="Fulfillment.wsdl"/>
-   <value n="Namespace" v="http://xmlns.oracle.com/POApp/POProcessing/Fulfillment"/>
+   <value n="Namespace" v="http://xmlns.oracle.com/POApp/POProcessing/ApproveCCorder"/>
    <hash n="oracle.ide.model.ResourcePaths">
       <hash n="resourcesContentSet">
          <list n="url-path"/>
@@ -407,6 +407,6 @@
          </list>
       </hash>
    </hash>
-   <value n="ProcessName" v="Fulfillment"/>
+   <value n="ProcessName" v="ApproveCCorder"/>
    <value n="Template" v="BPEL_ASYNC_PROCESS"/>
 </jpr:project>
