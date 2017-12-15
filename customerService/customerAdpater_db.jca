@@ -1,0 +1,14 @@
+<adapter-config name="customerAdpater" adapter="Database Adapter" wsdlLocation="customerAdpater.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/DB/soademoDS" UIConnectionName="soademo" adapterRef=""/>
+  <endpoint-interaction portType="customerAdpater_ptt" operation="customerAdpaterSelect">
+    <interaction-spec className="oracle.tip.adapter.db.DBReadInteractionSpec">
+      <property name="DescriptorName" value="customerAdpater.Customers"/>
+      <property name="QueryName" value="customerAdpaterSelect"/>
+      <property name="MappingsMetaDataURL" value="customerAdpater-or-mappings.xml"/>
+      <property name="ReturnSingleResultSet" value="true"/>
+      <property name="GetActiveUnitOfWork" value="false"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+</adapter-config>

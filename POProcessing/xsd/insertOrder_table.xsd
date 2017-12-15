@@ -1,0 +1,46 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xs:schema targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/insertOrder" xmlns="http://xmlns.oracle.com/pcbpel/adapter/db/top/insertOrder" elementFormDefault="qualified" attributeFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="OrdersCollection" type="OrdersCollection"/>
+   <xs:complexType name="OrdersCollection">
+      <xs:sequence>
+         <xs:element name="Orders" type="Orders" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="Orders">
+      <xs:sequence>
+         <xs:element name="ordId" type="xs:int"/>
+         <xs:element name="custId" type="xs:int" minOccurs="0"/>
+         <xs:element name="totalPrice" type="xs:decimal" minOccurs="0"/>
+         <xs:element name="dateOrdered" type="xs:dateTime" minOccurs="0"/>
+         <xs:element name="dateShipped" type="xs:dateTime" minOccurs="0" nillable="true"/>
+         <xs:element name="status" minOccurs="0" nillable="true">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:maxLength value="20"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="itemsCollection" minOccurs="0">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="Items" type="Items" minOccurs="0" maxOccurs="unbounded"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="Items">
+      <xs:sequence>
+         <xs:element name="itemId" type="xs:int"/>
+         <xs:element name="prodId" minOccurs="0">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:maxLength value="20"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="price" type="xs:decimal" minOccurs="0"/>
+         <xs:element name="quantity" type="xs:int" minOccurs="0" nillable="true"/>
+      </xs:sequence>
+   </xs:complexType>
+</xs:schema>

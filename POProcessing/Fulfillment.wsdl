@@ -1,63 +1,37 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions name="Fulfillment"
-             targetNamespace="http://xmlns.oracle.com/POApp/POProcessing/Fulfillment"
-             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-             xmlns:client="http://xmlns.oracle.com/POApp/POProcessing/Fulfillment"
-             xmlns:ns1="http://www.example.org/ns/fulfillment"
-             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
-
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	TYPE DEFINITION - List of services participating in this BPEL process
-	The default output of the BPEL designer uses strings as input and 
-	output to the BPEL Process. But you can define or import any XML 
-	Schema type and use them as part of the message types.
-	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
-	<wsdl:types>
-		<schema xmlns="http://www.w3.org/2001/XMLSchema">
-			<import namespace="http://www.example.org/ns/fulfillment" schemaLocation="xsd/fulfillment.xsd" />
-		</schema>
-	</wsdl:types>
-
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	MESSAGE TYPE DEFINITION - Definition of the message types used as 
-	part of the port type defintions
-	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
-	<wsdl:message name="FulfillmentRequestMessage">
-		<wsdl:part name="payload" element="ns1:FulFillmentRequest" />
-	</wsdl:message>
-
-	<wsdl:message name="FulfillmentResponseMessage">
-		<wsdl:part name="payload" element="ns1:FulfillmentResponse" />
-	</wsdl:message>
-
-
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	PORT TYPE DEFINITION - A port type groups a set of operations into
-	a logical service unit.
-	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-	<!-- portType implemented by the Fulfillment BPEL process -->
-	<wsdl:portType name="Fulfillment">
-		<wsdl:operation name="process">
-			<wsdl:input message="client:FulfillmentRequestMessage"/>
-		</wsdl:operation>
-	</wsdl:portType>
-
-	<!-- portType implemented by the requester of Fulfillment BPEL process
-	for asynchronous callback purposes
-	-->
-	<wsdl:portType name="FulfillmentCallback">
-		<wsdl:operation name="processResponse">
-			<wsdl:input message="client:FulfillmentResponseMessage"/>
-		</wsdl:operation>
-	</wsdl:portType>
-
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	PARTNER LINK TYPE DEFINITION
-	the Fulfillment partnerLinkType binds the provider and
-	requester portType into an asynchronous conversation.
-	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-	<plnk:partnerLinkType name="Fulfillment">
-		<plnk:role name="FulfillmentProvider" portType="client:Fulfillment"/>
-		<plnk:role name="FulfillmentRequester" portType="client:FulfillmentCallback"/>
-	</plnk:partnerLinkType>
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="Fulfillment"
+     targetNamespace="http://xmlns.oracle.com/POApp/POProcessing/Fulfillment"
+     xmlns:ns1="http://www.example.org/ns/fulfillment"
+     xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+     xmlns:client="http://xmlns.oracle.com/POApp/POProcessing/Fulfillment"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+    <plnk:partnerLinkType name="Fulfillment">
+        <plnk:role name="FulfillmentProvider" portType="client:Fulfillment"/>
+        <plnk:role name="FulfillmentRequester" portType="client:FulfillmentCallback"/>
+    </plnk:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.example.org/ns/fulfillment"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:client="http://xmlns.oracle.com/POApp/POProcessing/Fulfillment"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+            <import namespace="http://www.example.org/ns/fulfillment" schemaLocation="xsd/fulfillment.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="FulfillmentResponseMessage">
+        <wsdl:part name="payload" element="ns1:FulfillmentResponse"/>
+    </wsdl:message>
+    <wsdl:message name="FulfillmentRequestMessage">
+        <wsdl:part name="payload" element="ns1:FulFillmentRequest"/>
+    </wsdl:message>
+    <wsdl:portType name="FulfillmentCallback">
+        <wsdl:operation name="processResponse">
+            <wsdl:input message="client:FulfillmentResponseMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="Fulfillment">
+        <wsdl:operation name="process">
+            <wsdl:input message="client:FulfillmentRequestMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
 </wsdl:definitions>

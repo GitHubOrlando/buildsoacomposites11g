@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<FulFillmentRequest xmlns="http://www.example.org/ns/fulfillment">
+   <customerId xmlns="http://www.example.org/ns/intorder">customerId1</customerId>
+   <orderId xmlns="http://www.example.org/ns/intorder">orderId2</orderId>
+   <payMethod xmlns="http://www.example.org/ns/intorder">credit</payMethod>
+   <shipMethod xmlns="http://www.example.org/ns/intorder">two_day</shipMethod>
+   <orderTotal xmlns="http://www.example.org/ns/intorder">5</orderTotal>
+   <status xmlns="http://www.example.org/ns/intorder">status6</status>
+   <creditCard xmlns="http://www.example.org/ns/intorder">
+      <cardType>cardType7</cardType>
+      <cardNumber>cardNumber8</cardNumber>
+   </creditCard>
+   <items xmlns="http://www.example.org/ns/intorder">
+      <inStock>true</inStock>
+      <item>
+         <prodId>prodId9</prodId>
+         <prodName>prodName10</prodName>
+         <price>11</price>
+         <qty>-0</qty>
+         <itemTotal>12</itemTotal>
+      </item>
+      <item>
+         <prodId>prodId13</prodId>
+         <prodName>prodName14</prodName>
+         <price>15</price>
+         <qty>-0</qty>
+         <itemTotal>16</itemTotal>
+      </item>
+      <item>
+         <prodId>prodId17</prodId>
+         <prodName>prodName18</prodName>
+         <price>19</price>
+         <qty>-0</qty>
+         <itemTotal>20</itemTotal>
+      </item>
+   </items>
+</FulFillmentRequest>

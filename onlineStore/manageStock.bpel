@@ -183,14 +183,14 @@
         <if name="If2"
             xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
       <documentation>
-         <![CDATA[chek]]>
-      </documentation>
-      <condition>$inStock</condition>
+                <![CDATA[chek]]>
+            </documentation>
+      <condition>$operation='check'</condition>
       <sequence>
          <if name="If_InStock">
             <documentation>
-               <![CDATA[inStock]]>
-            </documentation>
+                        <![CDATA[inStock]]>
+                    </documentation>
             <condition>$inStock</condition>
             <assign name="inStock">
                <copy>
@@ -226,13 +226,12 @@
                   <to>$outputVariable.payload/ns2:status</to>
                </copy>
             </assign>
-            <invoke name="callBackAcquire" partnerLink="managestock_client"
-                    portType="client:manageStockCallback"
-                    operation="acquireStockResponse"
-                    inputVariable="outputVariable"
-                    xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
-                    bpelx:invokeAsDetail="no"/>
-         </sequence>
+                    <invoke name="callBackAcq" bpelx:invokeAsDetail="no"
+                            partnerLink="managestock_client"
+                            portType="client:manageStockCallback"
+                            operation="acquireStockResponse"
+                            inputVariable="outputVariable"/>
+                </sequence>
       </else>
    </if>
         <!-- 

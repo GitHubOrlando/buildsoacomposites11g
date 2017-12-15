@@ -25,4 +25,15 @@
     <interface.wsdl interface="http://xmlns.oracle.com/POApp/onlineStore/manageStock#wsdl.interface(manageStock)"
                     callbackInterface="http://xmlns.oracle.com/POApp/onlineStore/manageStock#wsdl.interface(manageStockCallback)"/>
   </reference>
+  <reference name="insertOrder" ui:wsdlLocation="insertOrder.wsdl">
+    <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/db/POApp/POProcessing/insertOrder#wsdl.interface(insertOrder_ptt)"/>
+  </reference>
+  <reference name="customerService"
+             ui:wsdlLocation="customerServiceWrapper.wsdl">
+    <interface.wsdl interface="http://oracle.com/sca/soapservice/POApp/customerService/customerService#wsdl.interface(get_ptt)"/>
+  </reference>
+  <reference name="NotificationService1"
+             ui:wsdlLocation="NotificationService.wsdl">
+    <interface.wsdl interface="http://xmlns.oracle.com/ias/pcbpel/NotificationService#wsdl.interface(NotificationService)"/>
+  </reference>
 </componentType>

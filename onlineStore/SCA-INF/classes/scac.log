@@ -1,8 +1,8 @@
-Dec 13, 2017 8:14:23 AM oracle.mds
+Dec 14, 2017 8:04:42 AM oracle.mds
 NOTIFICATION: PManager instance is created without multitenancy support as JVM flag "oracle.multitenant.enabled" is not set to enable multitenancy support.
-Dec 13, 2017 8:14:23 AM oracle.security.jps.internal.config.xml.XmlConfigurationFactory initDefaultConfiguration
+Dec 14, 2017 8:04:42 AM oracle.security.jps.internal.config.xml.XmlConfigurationFactory initDefaultConfiguration
 SEVERE: java.io.FileNotFoundException: ./config/jps-config.xml (No such file or directory)
-Dec 13, 2017 8:14:23 AM oracle.mds
+Dec 14, 2017 8:04:42 AM oracle.mds
 NOTIFICATION: Auditing is disabled for component MDS.
-Dec 13, 2017 8:14:24 AM oracle.fabric.common.wsdl.SchemaManager isIncrementalBuildSupported
+Dec 14, 2017 8:04:42 AM oracle.fabric.common.wsdl.SchemaManager isIncrementalBuildSupported
 INFO: XMLSchema incremental build enabled.

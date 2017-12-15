@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-persistence xmlns="http://www.eclipse.org/eclipselink/xsds/persistence" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:eclipselink="http://www.eclipse.org/eclipselink/xsds/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="Eclipse Persistence Services - 2.3.1.v20111018-r10243">
+   <name>customerAdpater-OR</name>
+   <class-mapping-descriptors>
+      <class-mapping-descriptor xsi:type="object-relational-class-mapping-descriptor">
+         <class>customerAdpater.Customers</class>
+         <alias>CUSTOMERS</alias>
+         <primary-key>
+            <field table="CUSTOMERS" name="CUST_ID" xsi:type="column"/>
+         </primary-key>
+         <events/>
+         <querying>
+            <queries>
+               <query name="customerAdpaterSelect" xsi:type="read-all-query">
+                  <arguments>
+                     <argument name="custId">
+                        <type>java.lang.Object</type>
+                     </argument>
+                  </arguments>
+                  <call xsi:type="sql-call">
+                     <sql>SELECT DISTINCT t1.CUST_ID, t1.FIRST_NAME, t1.LAST_NAME, t1.EMAIL, t1.USERNAME, t1.STATUS, t0.ADDR_ID, t0.STREET, t0.CITY, t0."STATE", t0.ZIP, t0.COUNTRY, t0.CUST_ID FROM CUSTOMERS t1 LEFT OUTER JOIN ADDRESS t0 ON (t0.CUST_ID = t1.CUST_ID) WHERE (t1.CUST_ID = #custId)</sql>
+                  </call>
+                  <reference-class>customerAdpater.Customers</reference-class>
+                  <container xsi:type="list-container-policy">
+                     <collection-type>java.util.Vector</collection-type>
+                  </container>
+               </query>
+            </queries>
+         </querying>
+         <attribute-mappings>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>custId</attribute-name>
+               <field table="CUSTOMERS" name="CUST_ID" xsi:type="column"/>
+               <attribute-classification>java.lang.Integer</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>firstName</attribute-name>
+               <field table="CUSTOMERS" name="FIRST_NAME" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>lastName</attribute-name>
+               <field table="CUSTOMERS" name="LAST_NAME" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>email</attribute-name>
+               <field table="CUSTOMERS" name="EMAIL" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>username</attribute-name>
+               <field table="CUSTOMERS" name="USERNAME" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>passwrd</attribute-name>
+               <properties>
+                  <property name="enabled">
+                     <value>false</value>
+                  </property>
+               </properties>
+               <field table="CUSTOMERS" name="PASSWRD" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>status</attribute-name>
+               <field table="CUSTOMERS" name="STATUS" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="one-to-many-mapping">
+               <attribute-name>addressCollection</attribute-name>
+               <reference-class>customerAdpater.Address</reference-class>
+               <private-owned>true</private-owned>
+               <target-foreign-key>
+                  <field-reference>
+                     <source-field table="ADDRESS" name="CUST_ID" xsi:type="column"/>
+                     <target-field table="CUSTOMERS" name="CUST_ID" xsi:type="column"/>
+                  </field-reference>
+               </target-foreign-key>
+               <batch-reading>true</batch-reading>
+               <container xsi:type="list-container-policy">
+                  <collection-type>org.eclipse.persistence.indirection.IndirectList</collection-type>
+               </container>
+               <indirection xsi:type="value-holder-indirection-policy"/>
+               <selection-query xsi:type="read-all-query">
+                  <reference-class>customerAdpater.Address</reference-class>
+                  <container xsi:type="list-container-policy">
+                     <collection-type>org.eclipse.persistence.indirection.IndirectList</collection-type>
+                  </container>
+               </selection-query>
+            </attribute-mapping>
+         </attribute-mappings>
+         <descriptor-type>independent</descriptor-type>
+         <caching>
+            <cache-type>weak-reference</cache-type>
+            <cache-size>-1</cache-size>
+            <always-refresh>true</always-refresh>
+         </caching>
+         <remote-caching>
+            <cache-type>weak-reference</cache-type>
+            <cache-size>-1</cache-size>
+         </remote-caching>
+         <instantiation/>
+         <copying xsi:type="instantiation-copy-policy"/>
+         <tables>
+            <table name="CUSTOMERS"/>
+         </tables>
+         <structure>structureName</structure>
+      </class-mapping-descriptor>
+      <class-mapping-descriptor xsi:type="object-relational-class-mapping-descriptor">
+         <class>customerAdpater.Address</class>
+         <alias>ADDRESS</alias>
+         <primary-key>
+            <field table="ADDRESS" name="ADDR_ID" xsi:type="column"/>
+         </primary-key>
+         <events/>
+         <querying/>
+         <attribute-mappings>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>addrId</attribute-name>
+               <field table="ADDRESS" name="ADDR_ID" xsi:type="column"/>
+               <attribute-classification>java.lang.Integer</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>custId</attribute-name>
+               <read-only>true</read-only>
+               <properties>
+                  <property name="fkPlaceholder">
+                     <value>true</value>
+                  </property>
+               </properties>
+               <field table="ADDRESS" name="CUST_ID" xsi:type="column"/>
+               <attribute-classification>java.lang.Integer</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>street</attribute-name>
+               <field table="ADDRESS" name="STREET" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>city</attribute-name>
+               <field table="ADDRESS" name="CITY" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>state</attribute-name>
+               <field table="ADDRESS" name="STATE" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>zip</attribute-name>
+               <field table="ADDRESS" name="ZIP" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>country</attribute-name>
+               <field table="ADDRESS" name="COUNTRY" xsi:type="column"/>
+               <attribute-classification>java.lang.String</attribute-classification>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="one-to-one-mapping">
+               <attribute-name>custId</attribute-name>
+               <reference-class>customerAdpater.Customers</reference-class>
+               <private-owned>true</private-owned>
+               <foreign-key>
+                  <field-reference>
+                     <source-field table="ADDRESS" name="CUST_ID" xsi:type="column"/>
+                     <target-field table="CUSTOMERS" name="CUST_ID" xsi:type="column"/>
+                  </field-reference>
+               </foreign-key>
+               <foreign-key-fields>
+                  <field table="ADDRESS" name="CUST_ID" xsi:type="column"/>
+               </foreign-key-fields>
+               <batch-reading>true</batch-reading>
+               <indirection xsi:type="value-holder-indirection-policy"/>
+               <selection-query xsi:type="read-object-query">
+                  <reference-class>customerAdpater.Customers</reference-class>
+               </selection-query>
+            </attribute-mapping>
+         </attribute-mappings>
+         <descriptor-type>independent</descriptor-type>
+         <caching>
+            <cache-type>weak-reference</cache-type>
+            <cache-size>-1</cache-size>
+            <always-refresh>true</always-refresh>
+         </caching>
+         <remote-caching>
+            <cache-type>weak-reference</cache-type>
+            <cache-size>-1</cache-size>
+         </remote-caching>
+         <instantiation/>
+         <copying xsi:type="instantiation-copy-policy"/>
+         <tables>
+            <table name="ADDRESS"/>
+         </tables>
+         <structure>structureName</structure>
+      </class-mapping-descriptor>
+   </class-mapping-descriptors>
+   <login xsi:type="database-login">
+      <platform-class>org.eclipse.persistence.platform.database.oracle.Oracle9Platform</platform-class>
+      <connection-url></connection-url>
+   </login>
+</object-persistence>

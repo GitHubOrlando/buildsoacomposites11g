@@ -1,12 +1,12 @@
-Dec 13, 2017 9:55:59 AM oracle.mds
+Dec 14, 2017 10:46:19 AM oracle.mds
 NOTIFICATION: PManager instance is created without multitenancy support as JVM flag "oracle.multitenant.enabled" is not set to enable multitenancy support.
-Dec 13, 2017 9:55:59 AM oracle.security.jps.internal.config.xml.XmlConfigurationFactory initDefaultConfiguration
+Dec 14, 2017 10:46:19 AM oracle.security.jps.internal.config.xml.XmlConfigurationFactory initDefaultConfiguration
 SEVERE: java.io.FileNotFoundException: ./config/jps-config.xml (No such file or directory)
-Dec 13, 2017 9:55:59 AM oracle.mds
+Dec 14, 2017 10:46:19 AM oracle.mds
 NOTIFICATION: Auditing is disabled for component MDS.
-Dec 13, 2017 9:55:59 AM oracle.fabric.common.wsdl.SchemaManager isIncrementalBuildSupported
+Dec 14, 2017 10:46:20 AM oracle.fabric.common.wsdl.SchemaManager isIncrementalBuildSupported
 INFO: XMLSchema incremental build enabled.
-Dec 13, 2017 9:56:00 AM oracle.integration.platform.blocks.FabricConfigManager <clinit>
+Dec 14, 2017 10:46:21 AM oracle.integration.platform.blocks.FabricConfigManager <clinit>
 WARNING: JRF is unable to determine the current application server platform.
-Dec 13, 2017 9:56:00 AM oracle.integration.platform.blocks.WLSPlatformConfigurationProvider <clinit>
+Dec 14, 2017 10:46:21 AM oracle.integration.platform.blocks.WLSPlatformConfigurationProvider <clinit>
 WARNING: JRF is unable to determine the current application server platform.

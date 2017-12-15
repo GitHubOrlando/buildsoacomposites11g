@@ -1,0 +1,25 @@
+<?binding.jca customerAdpater_db.jca?>
+<wsdl:definitions name="customerAdpater" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/POApp/customerService/customerAdpater" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/POApp/customerService/customerAdpater" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/customerAdpater">
+    <plt:partnerLinkType name="customerAdpater_plt">
+        <plt:role name="customerAdpater_role">
+            <plt:portType name="tns:customerAdpater_ptt"/>
+        </plt:role>
+    </plt:partnerLinkType>
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/customerAdpater" schemaLocation="xsd/customerAdpater_table.xsd"/>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="customerAdpaterSelect_inputParameters">
+        <wsdl:part name="customerAdpaterSelect_inputParameters" element="top:customerAdpaterSelect_custIdInputParameters"/>
+    </wsdl:message>
+    <wsdl:message name="CustomersCollection_msg">
+        <wsdl:part name="CustomersCollection" element="top:CustomersCollection"/>
+    </wsdl:message>
+    <wsdl:portType name="customerAdpater_ptt">
+        <wsdl:operation name="customerAdpaterSelect">
+            <wsdl:input message="tns:customerAdpaterSelect_inputParameters"/>
+            <wsdl:output message="tns:CustomersCollection_msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+</wsdl:definitions>

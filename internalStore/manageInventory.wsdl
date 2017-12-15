@@ -54,7 +54,6 @@
 		</wsdl:operation>
   <wsdl:operation name="acquireStockResponse">
    <wsdl:input message="client:manageInventoryResponseMessage"/>
-   <wsdl:output message="client:manageInventoryResponseMessage"/>
   </wsdl:operation>
  </wsdl:portType>
 

@@ -189,7 +189,7 @@
             <documentation>
                 <![CDATA[chek]]>
             </documentation>
-            <condition>$inStock</condition>
+            <condition>$operation='check'</condition>
             <sequence>
                 <if name="If_InStock">
                     <documentation>
@@ -237,7 +237,6 @@
                             portType="client:manageInventoryCallback"
                             operation="acquireStockResponse"
                             inputVariable="outputVariable"
-                            outputVariable="callBackAcquire_acquireStockResponse_OutputVariable"
                             bpelx:invokeAsDetail="no"/>
                 </sequence>
             </else>
